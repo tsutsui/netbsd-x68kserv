@@ -270,7 +270,7 @@ echo Preparing /etc/rc.conf...
 ${CAT} ${TARGETROOTDIR}/etc/rc.conf | \
 	${SED} -e 's/rc_configured=NO/rc_configured=YES/' > ${WORKDIR}/rc.conf
 ${CAT} >> ${WORKDIR}/rc.conf <<EOF
-hostname=${SERVNAME}
+hostname=${SERVERNAME}
 netconfig=YES
 rpcbind=YES		rpcbind_flags="-l"	# -l logs libwrap
 mountd=YES		mountd_flags=""		# NFS mount requests daemon

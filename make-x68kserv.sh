@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# Copyright (c) 2009, 2010, 2012 Izumi Tsutsui.  All rights reserved.
+# Copyright (c) 2009, 2010, 2012, 2013 Izumi Tsutsui.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,7 +22,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-VERSION=20121015
+VERSION=20130609
 SERVERNAME=x68kserv
 
 #MACHINE=amd64
@@ -105,11 +105,11 @@ fi
 #
 # info about ftp to get binary sets
 #
-FTPHOST=ftp.NetBSD.org
-#FTPHOST=ftp.jp.NetBSD.org
+#FTPHOST=ftp.NetBSD.org
+FTPHOST=ftp.jp.NetBSD.org
 #FTPHOST=ftp7.jp.NetBSD.org
 #FTPHOST=nyftp.NetBSD.org
-RELEASE=6.0
+RELEASE=6.1
 RELEASEDIR=pub/NetBSD/NetBSD-${RELEASE}
 #RELEASEDIR=pub/NetBSD-daily/HEAD/201011130000Z
 
@@ -153,8 +153,8 @@ IMAGEMB=1800			# for "2GB" USB memory
 #SWAPMB=256			# 256MB
 SWAPMB=128			# 128MB
 #SWAPMB=64			# 64MB
-IMAGESECTORS=`expr ${IMAGEMB} \* 1024 \* 1024 / 512`
-SWAPSECTORS=`expr ${SWAPMB} \* 1024 \* 1024 / 512`
+IMAGESECTORS=$((${IMAGEMB} * 1024 * 1024 / 512))
+SWAPSECTORS=$((${SWAPMB} * 1024 * 1024 / 512))
 
 LABELSECTORS=0
 if [ "${USE_MBR}" = "yes" ]; then
@@ -162,21 +162,21 @@ if [ "${USE_MBR}" = "yes" ]; then
 #	LABELSECTORS=32		# aligned?
 	LABELSECTORS=2048	# align 1MiB for modern flash devices
 fi
-BSDPARTSECTORS=`expr ${IMAGESECTORS} - ${LABELSECTORS}`
-FSSECTORS=`expr ${IMAGESECTORS} - ${SWAPSECTORS} - ${LABELSECTORS}`
+BSDPARTSECTORS=$((${IMAGESECTORS} - ${LABELSECTORS}))
+FSSECTORS=$((${IMAGESECTORS} - ${SWAPSECTORS} - ${LABELSECTORS}))
 FSOFFSET=${LABELSECTORS}
-SWAPOFFSET=`expr ${LABELSECTORS} + ${FSSECTORS}`
-FSSIZE=`expr ${FSSECTORS} \* 512`
+SWAPOFFSET=$((${LABELSECTORS} + ${FSSECTORS}))
+FSSIZE=$((${FSSECTORS} * 512))
 HEADS=64
 SECTORS=32
-CYLINDERS=`expr ${IMAGESECTORS} / \( ${HEADS} \* ${SECTORS} \)`
-FSCYLINDERS=`expr ${FSSECTORS} / \( ${HEADS} \* ${SECTORS} \)`
-SWAPCYLINDERS=`expr ${SWAPSECTORS} / \( ${HEADS} \* ${SECTORS} \)`
+CYLINDERS=$((${IMAGESECTORS} / ( ${HEADS} * ${SECTORS} ) ))
+FSCYLINDERS=$((${FSSECTORS} / ( ${HEADS} * ${SECTORS} ) ))
+SWAPCYLINDERS=$((${SWAPSECTORS} / ( ${HEADS} * ${SECTORS} ) ))
 
 # fdisk(8) parameters
 MBRSECTORS=63
 MBRHEADS=255
-MBRCYLINDERS=`expr ${IMAGESECTORS} / \( ${MBRHEADS} \* ${MBRSECTORS} \)`
+MBRCYLINDERS=$((${IMAGESECTORS} / ( ${MBRHEADS} * ${MBRSECTORS} ) ))
 MBRNETBSD=169
 
 # makefs(8) parameters
@@ -507,7 +507,7 @@ flags:
 bytes/sector: 512
 sectors/track: ${SECTORS}
 tracks/cylinder: ${HEADS}
-sectors/cylinder: `expr ${HEADS} \* ${SECTORS}`
+sectors/cylinder: $((${HEADS} * ${SECTORS}))
 cylinders: ${CYLINDERS}
 total sectors: ${IMAGESECTORS}
 rpm: 3600

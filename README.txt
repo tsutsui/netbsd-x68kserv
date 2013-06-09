@@ -15,18 +15,23 @@ automatically starts daemons like dhcpd(8), mountd(8), and nfsd(8),
 and it also contains an NFS exported NetBSD/x68k file system
 which has all release binaries including X server and clients.
 
+Since NetBSD 6.1 version, a bootable x68k floppy image that contains
+a brandnew netboot loader is also provided for easy bootstrap.
+
 
 3. Requirements
 
 - x86 based PC with NIC which can boot from USB devices
 - 10BASE-T cross cable (or HUB)
-- X680x0 machines and Neptune-X or Nereid Ethernet that can boot from
-  floppy including netboot loader
+- X680x0 machines and Neptune-X or Nereid Ethernet that can
+  write a bootstrap netboot floppy image and also can boot from it
+- 5.25" 2HD floppy media
 
 
 4. How to use x68kserv
 
-1) write image to 2GB (or larger) USB flash memory via gzip(1) and dd(1)
+1) write image to 2GB (or larger) USB flash memory via
+   gunzip(1) and dd(1)
    (or Rawrite32.exe tool for Windows),
     Rawrite32.exe tool can be found here:
     http://www.NetBSD.org/~martin/rawrite32/
@@ -35,11 +40,9 @@ which has all release binaries including X server and clients.
    note: x68kserv runs dhcpd(8) with its own address (10.0.0.xxx)
    so don't connect it to your open network.
 4) prepare bootable NetBSD/x68k floppy that includes netboot:
-   # newfs /dev/rfd1c
-   # mount /dev/fd1c /mnt
-   # cp /usr/mdec/netboot /mnt/boot
-   # /usr/mdec/installboot -v /usr/mdec/boot_ufs /dev/rfd1c
-5) boot NetBSD/x68k netboot via floppy
+   # gzcat x68knetbootfd-20130609.img.gz | dd of=/dev/rfd1c bs=15k
+   (gzip.x and rawrite.x binaries for Human68k can also be used)
+5) boot NetBSD/x68k from the above netboot floppy
 6) type enter on following prompts (dump device, file system, init path)
 7) have fun
 

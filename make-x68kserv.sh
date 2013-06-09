@@ -142,6 +142,10 @@ WORKDIR_X68K=${WORKDIR}/${NFSROOT}
 
 IMAGE=${WORKDIR}/${MACHINE}.img
 
+BOOTFDNAME=x68knetbootfd
+BOOTFDROOTDIR=bootfdroot
+BOOTFDIMAGE=${WORKDIR}/${BOOTFDNAME}.img
+
 DOWNLOADDIR_X68K=download.x68k
 
 #
@@ -528,13 +532,47 @@ EOF
 
 ${DISKLABEL} -R -F ${IMAGE} ${WORKDIR}/labelproto
 
+#
+# create a bootable floppy image with the secondary netboot
+#
+FDIMAGEKB=1200
+
+echo Preparing files for a netboot floppy image...
+${RM} -rf ${BOOTFDROOTDIR}
+${MKDIR} -p ${BOOTFDROOTDIR}
+
+${CP} ${TARGETROOTDIR}/${NFSROOT}/usr/mdec/netboot ${BOOTFDROOTDIR}/
+
+echo Preparing a specfile for a netboot floppy image...
+${CAT} >> ${WORKDIR}/spec.bootfd <<EOF
+/set type=dir uname=root gname=wheel mode=0755
+.
+./netboot			type=file mode=0444
+./boot				type=link mode=0755 link=netboot
+EOF
+
+echo Creating a netboot floppy image...
+${TOOLDIR}/bin/nbmakefs -M ${FDIMAGEKB}k -B be \
+	-F ${WORKDIR}/spec.bootfd -N ${TARGETROOTDIR}/etc \
+	-o bsize=4096,fsize=512,density=2048 \
+	${BOOTFDIMAGE} ${BOOTFDROOTDIR}
+
+echo Perform installboot for a netboot floppy image...
+${TOOLDIR}/bin/nbinstallboot -v -m x68k \
+	${BOOTFDIMAGE} ${TARGETROOTDIR}/nfsroot/usr/mdec/xxboot_ffsv1
+
 echo Creating gzipped image...
 ${GZIP} -9c ${WORKDIR}/${MACHINE}.img > ${WORKDIR}/${SERVERNAME}-${VERSION}.img.gz.tmp
 ${MV} ${WORKDIR}/${SERVERNAME}-${VERSION}.img.gz.tmp ${WORKDIR}/${SERVERNAME}-${VERSION}.img.gz
-(cd ${WORKDIR} ; ${CKSUM} -a sha512 ${SERVERNAME}-${VERSION}.img.gz > SHA512 )
-(cd ${WORKDIR} ; ${CKSUM} -a md5 ${SERVERNAME}-${VERSION}.img.gz > MD5)
 
-echo Creating ${SERVERNAME}-${VERSION} image complete.
+${GZIP} -9c ${BOOTFDIMAGE} > ${WORKDIR}/${BOOTFDNAME}-${VERSION}.img.gz.tmp
+${MV} ${WORKDIR}/${BOOTFDNAME}-${VERSION}.img.gz.tmp ${WORKDIR}/${BOOTFDNAME}-${VERSION}.img.gz
+
+IMAGES="${SERVERNAME}-${VERSION}.img.gz ${BOOTFDNAME}-${VERSION}.img.gz"
+(cd ${WORKDIR} ; ${CKSUM} -a sha512 ${IMAGES} > SHA512 )
+(cd ${WORKDIR} ; ${CKSUM} -a md5 ${IMAGES} > MD5)
+
+echo Creating ${SERVERNAME}-${VERSION} images complete.
 
 if [ "${TESTIMAGE}" != "yes" ]; then exit; fi
 

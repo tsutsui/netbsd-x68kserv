@@ -43,8 +43,7 @@ a brandnew netboot loader is also provided for easy bootstrap.
    # gzcat x68knetbootfd-20130609.img.gz | dd of=/dev/rfd1c bs=15k
    (gzip.x and rawrite.x binaries for Human68k can also be used)
 5) boot NetBSD/x68k from the above netboot floppy
-6) type enter on following prompts (dump device, file system, init path)
-7) have fun
+6) have fun
 
 
 5. Misc

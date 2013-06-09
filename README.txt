@@ -40,7 +40,7 @@ a brandnew netboot loader is also provided for easy bootstrap.
    note: x68kserv runs dhcpd(8) with its own address (10.0.0.xxx)
    so don't connect it to your open network.
 4) prepare bootable NetBSD/x68k floppy that includes netboot:
-   # gzcat x68knetbootfd-20130609.img.gz | dd of=/dev/rfd1c bs=15k
+   # gzcat x68knetbootfd-20130609.img.gz | dd of=/dev/rfd0c bs=15k
    (gzip.x and rawrite.x binaries for Human68k can also be used)
 5) boot NetBSD/x68k from the above netboot floppy
 6) have fun

@@ -40,7 +40,7 @@ NetBSD 6.1版からは、より簡単な起動ができるように、新たに�
    註: x68kserv は独自のアドレス (10.0.0.xxx) で dhcpd(8) を動かしますので、
    他のネットワークには接続しないでください。
 4) ネットブート用ブートローダを含む NetBSD/x68k 起動用フロッピーを用意します:
-   # gzcat x68knetbootfd-20130609.img.gz | dd of=/dev/rfd1c bs=15k
+   # gzcat x68knetbootfd-20130609.img.gz | dd of=/dev/rfd0c bs=15k
    (Human68k 用の gzip.x と rawrite.x のバイナリーも使用可能です)
 5) 上記のネットブート用フロッピーで NetBSD/x68k を起動します
 6) あとの楽しみ方はあなた次第です :-)
